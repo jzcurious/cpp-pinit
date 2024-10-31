@@ -1,0 +1,11 @@
+cmake_version: 3.24...3.30
+test_version: v1.15.2
+benchmark_version: v1.9.0
+std: 20
+lib_name: myproj
+lib_type: STATIC
+debug_flags: -Wall -pedantic -O0 -g -fsanitize=address
+release_flags: -Wall -pedantic -O3
+enable_tests: true
+enable_benchmarks: true
+enable_security: true

@@ -25,5 +25,6 @@ target_include_directories({project_name}-benchmarks PRIVATE
 
 target_link_libraries({project_name}-benchmarks PRIVATE
     benchmark::benchmark
+    {lib_name}
 )
 """

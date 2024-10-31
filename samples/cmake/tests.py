@@ -25,6 +25,7 @@ target_include_directories({project_name}-tests PRIVATE
 
 target_link_libraries({project_name}-tests PRIVATE
     GTest::gtest_main
+    {lib_name}
 )
 
 enable_testing()
