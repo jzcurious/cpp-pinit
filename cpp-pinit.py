@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 
 from pathlib import Path
-import shutil
+from sys import exit
+
 
 PNAME = ""
 PPATH = Path()
 SUBDIRS = ["tests", "benchmarks", "security"]
 CONFIG = {}
 LOCAL_CONFIG_FNAME = "cpp-pinit.yml"
+GLOBAL_CONFIG_FNAME = "cpp-pinit-global.yml"
 
 
 def set_project_path(project_path_str: str):
@@ -42,7 +44,6 @@ def subdir_filter_cond(subdir: str):
 
 
 def create_dirs(force=False):
-    from sys import exit
     from os import listdir
     from shutil import rmtree
 
@@ -114,11 +115,49 @@ def create_git():
         f.write(gitignore.const)
 
 
+def create_local_config():
+    from shutil import copyfile
+
+    PPATH.mkdir(parents=True, exist_ok=True)
+    dst = PPATH.joinpath(LOCAL_CONFIG_FNAME)
+    copyfile(GLOBAL_CONFIG_FNAME, dst)
+
+
 if __name__ == "__main__":
-    set_project_path("/home/void/Projects/cpp-pinit/myproj")
+    from argparse import ArgumentParser
+
+    parser = ArgumentParser()
+
+    parser.add_argument(
+        "-p", "--path", required=True, type=str, help="specify path to project"
+    )
+    parser.add_argument(
+        "-c",
+        "--config",
+        type=str,
+        default="",
+        help="specify path to config (overrides global config)",
+    )
+    parser.add_argument(
+        "-f", "--force", action="store_true", help="remove old project version"
+    )
+    parser.add_argument(
+        "-l", "--local", action="store_true", help="create local config and exit"
+    )
+
+    args = parser.parse_args()
+
+    set_project_path(args.path)
     set_project_name()
-    load_config("cpp-pinit-global.yml")
-    create_dirs()
+
+    if args.local:
+        create_local_config()
+        exit(0)
+
+    load_config(args.config)
+    create_dirs(args.force)
     create_cmakelists()
     create_ide()
     create_git()
+
+    # set_project_path("/home/void/Projects/cpp-pinit/myproj")
